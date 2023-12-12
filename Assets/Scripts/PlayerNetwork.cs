@@ -10,12 +10,14 @@ using Debug = UnityEngine.Debug;
 public class PlayerNetwork : NetworkBehaviour
 {
     [SerializeField] private Transform spawnedObjectPrefab;
+    private Transform spawnedObjectTransform;
     
     public struct PlayerData : INetworkSerializable
     {
         public int _hp;
         public bool _isDead;
         public FixedString128Bytes message;
+        
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -95,8 +97,13 @@ public class PlayerNetwork : NetworkBehaviour
             //         TargetClientIds = new List<ulong> { 1 }
             //     }
             // });
-            Transform spawnedObject = Instantiate(spawnedObjectPrefab);
-            spawnedObject.GetComponent<NetworkObject>().Spawn(true);
+            spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
+            spawnedObjectTransform.GetComponent<NetworkObject>().Spawn(true);
+        }
+        if(Input.GetKeyDown(KeyCode.X))
+        {
+            spawnedObjectTransform.GetComponent<NetworkObject>().Despawn(true);
+            Destroy(spawnedObjectTransform.gameObject);
         }
 
         if (Input.GetKeyDown(KeyCode.Y))
