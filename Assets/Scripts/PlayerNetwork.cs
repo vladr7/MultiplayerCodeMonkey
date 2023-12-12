@@ -1,22 +1,56 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class PlayerNetwork : NetworkBehaviour
 {
+    public struct PlayerData : INetworkSerializable
+    {
+        public int _hp;
+        public bool _isDead;
+        public FixedString128Bytes message;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref _hp);
+            serializer.SerializeValue(ref _isDead);
+            serializer.SerializeValue(ref message);
+        }
+    }
+
     private NetworkVariable<int> score = new NetworkVariable<int>(
         1,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner
     );
-    
+
+    private NetworkVariable<PlayerData> playerData = new NetworkVariable<PlayerData>(
+        new PlayerData
+        {
+            _hp = 100,
+            _isDead = false,
+            message = "Hello World"
+        },
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner
+    );
+
     public override void OnNetworkSpawn()
     {
         score.OnValueChanged += (int previousValue, int newValue) =>
         {
             Debug.Log(OwnerClientId + " ; score: " + score.Value);
+        };
+        playerData.OnValueChanged += (PlayerData previousValue, PlayerData newValue) =>
+        {
+            Debug.Log(OwnerClientId + " ; hp: " + playerData.Value._hp 
+                      + " ; isDead: " + playerData.Value._isDead +
+                      " ; message: " + playerData.Value.message);
         };
     }
 
@@ -51,6 +85,16 @@ public class PlayerNetwork : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             score.Value++;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            playerData.Value = new PlayerData
+            {
+                _hp = 50,
+                _isDead = true,
+                message = "Changed the World!"
+            };
         }
 
         float moveSpeed = 3f;
