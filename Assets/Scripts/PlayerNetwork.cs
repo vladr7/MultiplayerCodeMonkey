@@ -95,7 +95,8 @@ public class PlayerNetwork : NetworkBehaviour
             //         TargetClientIds = new List<ulong> { 1 }
             //     }
             // });
-            Instantiate(spawnedObjectPrefab);
+            Transform spawnedObject = Instantiate(spawnedObjectPrefab);
+            spawnedObject.GetComponent<NetworkObject>().Spawn(true);
         }
 
         if (Input.GetKeyDown(KeyCode.Y))
