@@ -9,6 +9,8 @@ using Debug = UnityEngine.Debug;
 
 public class PlayerNetwork : NetworkBehaviour
 {
+    [SerializeField] private Transform spawnedObjectPrefab;
+    
     public struct PlayerData : INetworkSerializable
     {
         public int _hp;
@@ -86,13 +88,14 @@ public class PlayerNetwork : NetworkBehaviour
         {
             // score.Value++;
             // TestServerRpc(message:"Message testing ServerRpc");
-            TestClientRpc(new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = new List<ulong> { 1 }
-                }
-            });
+            // TestClientRpc(new ClientRpcParams
+            // {
+            //     Send = new ClientRpcSendParams
+            //     {
+            //         TargetClientIds = new List<ulong> { 1 }
+            //     }
+            // });
+            Instantiate(spawnedObjectPrefab);
         }
 
         if (Input.GetKeyDown(KeyCode.Y))
