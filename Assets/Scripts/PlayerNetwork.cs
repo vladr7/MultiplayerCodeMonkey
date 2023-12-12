@@ -11,10 +11,17 @@ public class PlayerNetwork : NetworkBehaviour
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner
     );
+    
+    public override void OnNetworkSpawn()
+    {
+        score.OnValueChanged += (int previousValue, int newValue) =>
+        {
+            Debug.Log(OwnerClientId + " ; score: " + score.Value);
+        };
+    }
 
     private void Update()
     {
-        Debug.Log(OwnerClientId + " ; score: " + score.Value);
         if (!IsOwner)
         {
             return;
