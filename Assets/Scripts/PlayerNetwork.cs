@@ -48,7 +48,7 @@ public class PlayerNetwork : NetworkBehaviour
         };
         playerData.OnValueChanged += (PlayerData previousValue, PlayerData newValue) =>
         {
-            Debug.Log(OwnerClientId + " ; hp: " + playerData.Value._hp 
+            Debug.Log(OwnerClientId + " ; hp: " + playerData.Value._hp
                       + " ; isDead: " + playerData.Value._isDead +
                       " ; message: " + playerData.Value.message);
         };
@@ -86,7 +86,13 @@ public class PlayerNetwork : NetworkBehaviour
         {
             // score.Value++;
             // TestServerRpc(message:"Message testing ServerRpc");
-            TestClientRpc(experience: 100);
+            TestClientRpc(new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new List<ulong> { 1 }
+                }
+            });
         }
 
         if (Input.GetKeyDown(KeyCode.Y))
@@ -104,14 +110,14 @@ public class PlayerNetwork : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void TestServerRpc(string message)  
+    private void TestServerRpc(string message)
     {
         Debug.Log("TestServerRpc " + OwnerClientId + " ; message: " + message);
     }
-    
+
     [ClientRpc]
-    private void TestClientRpc(int experience)  
+    private void TestClientRpc(ClientRpcParams clientRpcParams)
     {
-        Debug.Log("TestClientRpc " + OwnerClientId + " ; experience: " + experience);
+        Debug.Log("TestClientRpc " + OwnerClientId);
     }
 }
