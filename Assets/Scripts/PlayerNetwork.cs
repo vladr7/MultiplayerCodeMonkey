@@ -84,8 +84,9 @@ public class PlayerNetwork : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            TestServerRpc(message:"Message testing ServerRpc");
             // score.Value++;
+            // TestServerRpc(message:"Message testing ServerRpc");
+            TestClientRpc(experience: 100);
         }
 
         if (Input.GetKeyDown(KeyCode.Y))
@@ -106,5 +107,11 @@ public class PlayerNetwork : NetworkBehaviour
     private void TestServerRpc(string message)  
     {
         Debug.Log("TestServerRpc " + OwnerClientId + " ; message: " + message);
+    }
+    
+    [ClientRpc]
+    private void TestClientRpc(int experience)  
+    {
+        Debug.Log("TestClientRpc " + OwnerClientId + " ; experience: " + experience);
     }
 }
